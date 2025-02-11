@@ -1,5 +1,14 @@
 const { pegarImagemNoBanco } = require("../REPOSITORY/AWSRepository");
 
+async function criar ( imagem ) {
+    try {
+        return await criarImagemNoBanco( imagem );
+    } catch ( error ) {
+        console.error ( "Erro ao criar imagem: ", error.message);
+        throw error;
+    }
+}
+
 async function pegarImagem ( referencia ) {
     try {
         return await pegarImagemNoBanco( referencia );
@@ -9,4 +18,4 @@ async function pegarImagem ( referencia ) {
     }
 }
 
-module.exports = { pegarImagem };
+module.exports = { criar, pegarImagem };
