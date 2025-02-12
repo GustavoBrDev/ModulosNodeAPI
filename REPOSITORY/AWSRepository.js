@@ -10,7 +10,7 @@ const criarImagemNoBanco = ( idUser) => {
                 reject(new Error("Erro ao criar imagem: " + err.message));
             } else {
                 resolve(results);
-                // mandarParaOAws(ref);
+                mandarParaOAws(ref);
             }
         });
     });
@@ -36,8 +36,8 @@ const mandarParaOAws = ( ref ) => {
     // Configuração das credenciais AWS
     AWS.config.update({
         region: 'us-west-1',  
-        accessKeyId: 'SEU_ACCESS_KEY',
-        secretAccessKey: 'SEU_SECRET_KEY'
+        accessKeyId: '',
+        secretAccessKey: ''
     });
 
     const s3 = new AWS.S3();
@@ -62,7 +62,13 @@ const mandarParaOAws = ( ref ) => {
         });
     };
 
-    uploadFile ( '/IMAGENS/starwars.jpg', 'bucketmi74', ref );
+    if ( fs.existsSync('C:/Users/gustavo_stinghen/Documents/Cloud/ModulosNodeAPI/IMAGENS/starwars.jpg') ){
+        console.log('Arquivo existente');
+    } else {
+        console.log('Arquivo inexistente');
+    }
+
+    uploadFile ( 'C:/Users/gustavo_stinghen/Documents/Cloud/ModulosNodeAPI/IMAGENS/starwars.jpg', 'bucketmi74', ref );
 }
 
 
