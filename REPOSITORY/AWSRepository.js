@@ -48,9 +48,9 @@ const mandarParaOAws = ( ref ) => {
         const fileContent = fs.readFileSync(filePath);
     
         const params = {
-        Bucket: bucketName,  // Nome do seu bucket S3
-        Key: keyName,        // Nome do arquivo no S3
-        Body: fileContent    // Conteúdo do arquivo
+            Bucket: bucketName,  // Nome do seu bucket S3
+            Key: keyName,        // Nome do arquivo no S3
+            Body: fileContent    // Conteúdo do arquivo
         };
     
         s3.upload(params, (err, data) => {
