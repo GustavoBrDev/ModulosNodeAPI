@@ -1,8 +1,8 @@
-const { pegarImagemNoBanco } = require("../REPOSITORY/AWSRepository");
+const { criarImagemNoBanco, pegarImagemNoBanco } = require("../REPOSITORY/AWSRepository");
 
-async function criar ( imagem ) {
+async function criar ( idUser ) {
     try {
-        return await criarImagemNoBanco( imagem );
+        return await criarImagemNoBanco( idUser );
     } catch ( error ) {
         console.error ( "Erro ao criar imagem: ", error.message);
         throw error;

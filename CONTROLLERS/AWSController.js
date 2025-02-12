@@ -1,10 +1,9 @@
 const { criar, buscarPorId } = require("../SERVICES/AWSService");
 
 const criarImagem = async ( req, res ) => {
-    const { imagem } = req.body;
-
+    const { idUser } = req.body;
     try {
-        await criar(imagem);
+        await criar(idUser);
         res.status(200).json("Imagem adicionada");
     } catch (error) {
         res.status(400).json({ error: error.message });

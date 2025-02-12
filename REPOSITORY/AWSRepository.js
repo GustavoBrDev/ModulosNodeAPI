@@ -1,16 +1,16 @@
 const { con } = require('./ConexaoBanco');
 const UUID = require('uuid');
 
-const criarImagemNoBanco = (imagem) => {
+const criarImagemNoBanco = ( idUser) => {
     return new Promise ((resolve, reject) => {
-        const ref = UUID.new();
-        const sql = "INSERT INTO tb_imagem_aws (referencia, idUser) VALUES (?, ? )";
-        con.query(sql, [ref, imagem.idUser], (err, results) => {
+        const ref = UUID.v4();
+        const sql = "INSERT INTO tb_imagem_aws (ref, id_user) VALUES (?, ? )";
+        con.query(sql, [ref, idUser], (err, results) => {
             if (err) {
                 reject(new Error("Erro ao criar imagem: " + err.message));
             } else {
                 resolve(results);
-                mandarParaOAws(ref);
+                // mandarParaOAws(ref);
             }
         });
     });
