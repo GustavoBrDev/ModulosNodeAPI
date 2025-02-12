@@ -18,7 +18,7 @@ const criarImagemNoBanco = ( idUser) => {
 
 const pegarImagemNoBanco = (id) => {
     return new Promise ((resolve, reject) => {
-        const sql = "SELECT * FROM tb_imagem WHERE id = ?";
+        const sql = "SELECT * FROM tb_imagem_aws WHERE id = ?";
         con.query(sql, [id], (err, results) => {
             if (err) {
                 reject(new Error("Erro ao buscar imagem: " + err.message));
@@ -27,6 +27,19 @@ const pegarImagemNoBanco = (id) => {
             }
         });
     });
+}
+
+const baixarImagem = ( ref ) => {
+    return new Promise ((resolve, reject) => {
+       const sql = "SELECT * FROM tb_imagem_aws WHERE ref = ?";
+       con.query(sql, [ref], (err, results) => {
+           if (err) {
+               reject(new Error("Erro ao buscar imagem: " + err.message));
+           } else {
+               resolve(results[0]);
+           }
+       }) 
+    })
 }
 
 const mandarParaOAws = ( ref ) => {
