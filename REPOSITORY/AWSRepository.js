@@ -1,5 +1,7 @@
 const { con } = require('./ConexaoBanco');
+const { s3, fs } = require('./ConexaoBanco');
 const UUID = require('uuid');
+const aws_bucketName = 'bucketmi74';
 
 const criarImagemNoBanco = ( idUser) => {
     return new Promise ((resolve, reject) => {
@@ -29,7 +31,7 @@ const pegarImagemNoBanco = (id) => {
     });
 }
 
-const baixarImagem = ( ref ) => {
+const baixarImagem = ( ref, arquivoNome ) => {
     return new Promise ((resolve, reject) => {
        const sql = "SELECT * FROM tb_imagem_aws WHERE ref = ?";
        con.query(sql, [ref], (err, results) => {
@@ -37,24 +39,13 @@ const baixarImagem = ( ref ) => {
                reject(new Error("Erro ao buscar imagem: " + err.message));
            } else {
                resolve(results[0]);
+               pegarNoAws(arquivoNome);
            }
        }) 
     })
 }
 
 const mandarParaOAws = ( ref ) => {
-
-    const AWS = require('aws-sdk');
-
-    // Configuração das credenciais AWS
-    AWS.config.update({
-        region: 'us-west-1',  
-        accessKeyId: '',
-        secretAccessKey: ''
-    });
-
-    const s3 = new AWS.S3();
-    const fs = require('fs');
 
     const uploadFile = (filePath, bucketName, keyName) => {
 
@@ -75,14 +66,31 @@ const mandarParaOAws = ( ref ) => {
         });
     };
 
-    if ( fs.existsSync('C:/Users/gustavo_stinghen/Documents/Cloud/ModulosNodeAPI/IMAGENS/starwars.jpg') ){
-        console.log('Arquivo existente');
-    } else {
-        console.log('Arquivo inexistente');
-    }
+    uploadFile ( 'C:/Users/gustavo_stinghen/Documents/Cloud/ModulosNodeAPI/IMAGENS/starwars.jpg', aws_bucketName, ref );
+}
 
-    uploadFile ( 'C:/Users/gustavo_stinghen/Documents/Cloud/ModulosNodeAPI/IMAGENS/starwars.jpg', 'bucketmi74', ref );
+const pegarNoAws = ( arquivoNome ) => {
+
+    const downloadFile = (bucketName, keyName, downloadPath) => {
+        
+        const params = {
+          Bucket: bucketName,
+          Key: keyName
+        };
+      
+        const file = fs.createWriteStream(downloadPath);
+      
+        s3.getObject(params).createReadStream().pipe(file);
+      
+        file.on('close', () => {
+          console.log('Arquivo baixado com sucesso:', downloadPath);
+        });
+      };
+      
+      // Exemplo de uso
+      downloadFile( aws_bucketName, arquivoNome, 'C:/Users/gustavo_stinghen/Documents/Cloud/ModulosNodeAPI/IMAGENS');
+
 }
 
 
-module.exports = { criarImagemNoBanco, pegarImagemNoBanco };
+module.exports = { criarImagemNoBanco, pegarImagemNoBanco, baixarImagem };

@@ -21,4 +21,21 @@ async function conectarBanco() {
     module.exports = {con};
 }
 
-module.exports = { conectarBanco };
+async function conectarAws (){
+    
+    const AWS = require('aws-sdk');
+
+    // Configuração das credenciais AWS
+    AWS.config.update({
+        region: 'us-west-1',  
+        accessKeyId: '',
+        secretAccessKey: ''
+    });
+
+    const s3 = new AWS.S3();
+    const fs = require('fs');
+
+    module.exports = {s3, fs};
+}
+
+module.exports = { conectarBanco, conectarAws };

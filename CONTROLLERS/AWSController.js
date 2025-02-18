@@ -1,4 +1,4 @@
-const { criar, buscarPorId } = require("../SERVICES/AWSService");
+const { criar, buscarPorId, pegarDaAws } = require("../SERVICES/AWSService");
 
 const criarImagem = async ( req, res ) => {
     const { idUser } = req.body;
@@ -21,4 +21,15 @@ const pegarImagem = async ( req, res ) => {
     }
 }
 
-module.exports = { criarImagem, pegarImagem };
+const pegarImagemDaAws = async ( req, res ) => {
+    const { referencia, arquivoNome } = req.body;
+
+    try {
+        const imagem = await pegarDaAws(referencia, arquivoNome);
+        res.status(200).json(imagem);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+module.exports = { criarImagem, pegarImagem, pegarImagemDaAws };

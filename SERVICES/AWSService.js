@@ -1,4 +1,4 @@
-const { criarImagemNoBanco, pegarImagemNoBanco } = require("../REPOSITORY/AWSRepository");
+const { criarImagemNoBanco, pegarImagemNoBanco, baixarImagem } = require("../REPOSITORY/AWSRepository");
 
 async function criar ( idUser ) {
     try {
@@ -9,7 +9,7 @@ async function criar ( idUser ) {
     }
 }
 
-async function pegarImagem ( referencia ) {
+async function buscarPorId ( referencia ) {
     try {
         return await pegarImagemNoBanco( referencia );
     } catch ( error ) {
@@ -18,4 +18,13 @@ async function pegarImagem ( referencia ) {
     }
 }
 
-module.exports = { criar, pegarImagem };
+async function pegarDaAws ( referencia, arquivoNome ) {
+    try {
+        return await baixarImagem( referencia, arquivoNome );
+    } catch ( error ) {
+        console.error ( "Erro ao baixar imagem: ", error.message);
+        throw error;
+    }
+}
+
+module.exports = { criar, buscarPorId, pegarDaAws };
