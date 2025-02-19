@@ -48,19 +48,8 @@ const pegarImagemNoBanco = (id) => {
     });
 }
 
-const baixarImagem = ( ref, arquivoNome ) => {
-    console.log(con);
-    return new Promise ((resolve, reject) => {
-       const sql = "SELECT * FROM tb_imagem_aws WHERE ref = ?";
-       con.query(sql, [ref], (err, results) => {
-           if (err) {
-               reject(new Error("Erro ao buscar imagem: " + err.message));
-           } else {
-               resolve(results[0]);
-               pegarNoAws(ref, arquivoNome);
-           }
-       }) 
-    })
+const baixarImagem = ( arquivoNome ) => {
+    pegarNoAws(arquivoNome);
 }
 
 const mandarParaOAws = ( ref ) => {
@@ -91,7 +80,7 @@ const mandarParaOAws = ( ref ) => {
     uploadFile ( 'C:/Users/gustavo_stinghen/Documents/Cloud/ModulosNodeAPI/IMAGENS/starwars.jpg', aws_bucketName, ref );
 }
 
-const pegarNoAws = ( ref, arquivoNome ) => {
+const pegarNoAws = ( arquivoNome ) => {
 
     if ( !s3 ) {
         conectarAws();
@@ -104,7 +93,6 @@ const pegarNoAws = ( ref, arquivoNome ) => {
           Key: keyName
         };
       
-        console.log(fs);
         const file = fs.createWriteStream(downloadPath);
       
         s3.getObject(params).createReadStream().pipe(file);
@@ -115,7 +103,7 @@ const pegarNoAws = ( ref, arquivoNome ) => {
       };
       
     // Exemplo de uso
-    downloadFile( aws_bucketName, ref, arquivoNome);
+    downloadFile( aws_bucketName, arquivoNome, 'C:/Users/gustavo_stinghen/Downloads');
 
 }
 

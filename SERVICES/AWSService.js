@@ -18,9 +18,9 @@ async function buscarPorId ( referencia ) {
     }
 }
 
-async function pegarDaAws ( referencia, arquivoNome ) {
+async function pegarDaAws ( arquivoNome ) {
     try {
-        return await baixarImagem( referencia, arquivoNome );
+        return await baixarImagem( arquivoNome );
     } catch ( error ) {
         console.error ( "Erro ao baixar imagem: ", error.message);
         throw error;
