@@ -1,6 +1,5 @@
-const { conectarBanco, conectarAws } = require('./REPOSITORY/ConexaoBanco');
+const { conectarBanco } = require('./REPOSITORY/ConexaoBanco');
 conectarBanco();
-conectarAws();
 
 const express = require('express');
 const app = express();

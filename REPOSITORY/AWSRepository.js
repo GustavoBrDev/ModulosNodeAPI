@@ -1,7 +1,24 @@
 const { con } = require('./ConexaoBanco');
-const { s3, fs } = require('./ConexaoBanco');
 const UUID = require('uuid');
 const aws_bucketName = 'bucketmi74';
+let s3;
+let fs = require('fs');
+
+const conectarAws = () => {
+    
+    console.log('Conectando ao AWS...');
+
+    const AWS = require('aws-sdk');
+
+    // Configuração das credenciais AWS
+    AWS.config.update({
+        region: 'us-west-1',  
+        accessKeyId: '',
+        secretAccessKey: ''
+    });
+
+    s3 = new AWS.S3();
+}
 
 const criarImagemNoBanco = ( idUser) => {
     return new Promise ((resolve, reject) => {
@@ -32,6 +49,7 @@ const pegarImagemNoBanco = (id) => {
 }
 
 const baixarImagem = ( ref, arquivoNome ) => {
+    console.log(con);
     return new Promise ((resolve, reject) => {
        const sql = "SELECT * FROM tb_imagem_aws WHERE ref = ?";
        con.query(sql, [ref], (err, results) => {
@@ -39,13 +57,17 @@ const baixarImagem = ( ref, arquivoNome ) => {
                reject(new Error("Erro ao buscar imagem: " + err.message));
            } else {
                resolve(results[0]);
-               pegarNoAws(arquivoNome);
+               pegarNoAws(ref, arquivoNome);
            }
        }) 
     })
 }
 
 const mandarParaOAws = ( ref ) => {
+
+    if ( !s3 ) {
+        conectarAws();
+    }
 
     const uploadFile = (filePath, bucketName, keyName) => {
 
@@ -69,7 +91,11 @@ const mandarParaOAws = ( ref ) => {
     uploadFile ( 'C:/Users/gustavo_stinghen/Documents/Cloud/ModulosNodeAPI/IMAGENS/starwars.jpg', aws_bucketName, ref );
 }
 
-const pegarNoAws = ( arquivoNome ) => {
+const pegarNoAws = ( ref, arquivoNome ) => {
+
+    if ( !s3 ) {
+        conectarAws();
+    }
 
     const downloadFile = (bucketName, keyName, downloadPath) => {
         
@@ -78,6 +104,7 @@ const pegarNoAws = ( arquivoNome ) => {
           Key: keyName
         };
       
+        console.log(fs);
         const file = fs.createWriteStream(downloadPath);
       
         s3.getObject(params).createReadStream().pipe(file);
@@ -87,8 +114,8 @@ const pegarNoAws = ( arquivoNome ) => {
         });
       };
       
-      // Exemplo de uso
-      downloadFile( aws_bucketName, arquivoNome, 'C:/Users/gustavo_stinghen/Documents/Cloud/ModulosNodeAPI/IMAGENS');
+    // Exemplo de uso
+    downloadFile( aws_bucketName, ref, arquivoNome);
 
 }
 
