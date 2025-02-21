@@ -86,24 +86,31 @@ const pegarNoAws = ( arquivoNome ) => {
         conectarAws();
     }
 
-    const downloadFile = (bucketName, keyName, downloadPath) => {
+    const downloadFile = (bucketName, keyName ) => {
         
         const params = {
           Bucket: bucketName,
           Key: keyName
         };
       
-        const file = fs.createWriteStream(downloadPath);
+        s3.getObject(params).promise()
+          .then(data => {
+            
+            const downloadsPath = path.join(require('os').homedir(), 'Downloads');
+            const filePath = path.join(downloadsPath, referencia);
+            fs.writeFileSync(filePath, data.Body);
+            
+            console.log('Arquivo baixado com sucesso:', filePath);
+
+          })
+          .catch(err => {
+            console.error('Erro ao baixar o arquivo:', err);
+          });
       
-        s3.getObject(params).createReadStream().pipe(file);
-      
-        file.on('close', () => {
-          console.log('Arquivo baixado com sucesso:', downloadPath);
-        });
       };
       
     // Exemplo de uso
-    downloadFile( aws_bucketName, arquivoNome, 'C:/Users/gustavo_stinghen/Downloads');
+    return downloadFile( aws_bucketName, arquivoNome );
 
 }
 
