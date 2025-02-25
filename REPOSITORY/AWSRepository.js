@@ -3,6 +3,7 @@ const UUID = require('uuid');
 const aws_bucketName = 'bucketmi74';
 let s3;
 let fs = require('fs');
+const path = require('path');
 
 const conectarAws = () => {
     
@@ -82,6 +83,9 @@ const mandarParaOAws = ( ref ) => {
 
 const pegarNoAws = ( arquivoNome ) => {
 
+    console.log('Pegando da AWS...');
+    console.log(arquivoNome);
+
     if ( !s3 ) {
         conectarAws();
     }
@@ -97,7 +101,7 @@ const pegarNoAws = ( arquivoNome ) => {
           .then(data => {
             
             const downloadsPath = path.join(require('os').homedir(), 'Downloads');
-            const filePath = path.join(downloadsPath, referencia);
+            const filePath = path.join(downloadsPath, arquivoNome);
             fs.writeFileSync(filePath, data.Body);
             
             console.log('Arquivo baixado com sucesso:', filePath);
