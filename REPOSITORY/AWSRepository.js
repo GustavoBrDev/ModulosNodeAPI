@@ -1,29 +1,10 @@
 const { con } = require('./ConexaoBanco');
 const UUID = require('uuid');
 const aws_bucketName = 'bucketmi74';
-let s3;
 let fs = require('fs');
 const path = require('path');
 
-const conectarAws = () => {
-    
-    console.log('Conectando ao AWS...');
-
-    const AWS = require('aws-sdk');
-
-    // Configuração das credenciais AWS
-    AWS.config.update({
-        region: 'us-west-1',  
-        accessKeyId: '',
-        secretAccessKey: ''
-    });
-
-    s3 = new AWS.S3();
-
-    // Olá
-}
-
-const criarImagemNoBanco = ( idUser) => {
+const criarImagemNoBanco = ( idUser, imagem, s3) => {
     return new Promise ((resolve, reject) => {
         const ref = UUID.v4();
         const sql = "INSERT INTO tb_imagem_aws (ref, id_user) VALUES (?, ? )";
@@ -32,7 +13,7 @@ const criarImagemNoBanco = ( idUser) => {
                 reject(new Error("Erro ao criar imagem: " + err.message));
             } else {
                 resolve(results);
-                mandarParaOAws(ref);
+                mandarParaOAws(ref, imagem, s3);
             }
         });
     });
@@ -51,15 +32,11 @@ const pegarImagemNoBanco = (id) => {
     });
 }
 
-const baixarImagem = ( arquivoNome ) => {
-    pegarNoAws(arquivoNome);
+const baixarImagem = ( arquivoNome, s3 ) => {
+    pegarNoAws(arquivoNome, s3);
 }
 
-const mandarParaOAws = ( ref ) => {
-
-    if ( !s3 ) {
-        conectarAws();
-    }
+const mandarParaOAws = ( ref, imagem, s3 ) => {
 
     const uploadFile = (filePath, bucketName, keyName) => {
 
@@ -80,10 +57,10 @@ const mandarParaOAws = ( ref ) => {
         });
     };
 
-    uploadFile ( 'C:/Users/gustavo_stinghen/Documents/Cloud/ModulosNodeAPI/IMAGENS/starwars.jpg', aws_bucketName, ref );
+    uploadFile ( imagem, aws_bucketName, ref );
 }
 
-const pegarNoAws = ( arquivoNome ) => {
+const pegarNoAws = ( arquivoNome, s3 ) => {
 
     console.log('Pegando da AWS...');
     console.log(arquivoNome);
