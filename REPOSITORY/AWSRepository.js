@@ -19,6 +19,8 @@ const conectarAws = () => {
     });
 
     s3 = new AWS.S3();
+
+    // Olá
 }
 
 const criarImagemNoBanco = ( idUser) => {
